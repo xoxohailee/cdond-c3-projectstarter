@@ -318,10 +318,10 @@ jobs:
 workflows:
   default:
     jobs:
-      - build-frontend
+      - build-frontend:
           context:
             - SlackNotiContext
-      - build-backend
+      - build-backend:
           context:
             - SlackNotiContext
       - test-frontend:
