@@ -164,7 +164,6 @@ jobs:
               --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID}" \
               --tags project=udapeople \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID}"
-              exit 1
       - run:
           name: Ensure front-end infrastructure exist
           command: |
@@ -175,14 +174,12 @@ jobs:
               --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID}" \
               --tags project=udapeople \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID}" 
-              exit 1
       - run:
           name: Add back-end ip to ansible inventory
           command: |
             PUBLIC_DNS=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicDnsName' --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID}" --output text)
             echo ${PUBLIC_DNS}
             curl -H "Content-Type: text/plain" -H "token: ${CIRCLE_WORKFLOW_ID}" --request PUT --data ${PUBLIC_DNS} https://api.memstash.io/values/public_dns
-              exit 1
       - persist_to_workspace:
           root: ~/
           paths:
