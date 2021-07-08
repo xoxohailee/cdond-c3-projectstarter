@@ -186,7 +186,7 @@ jobs:
       - persist_to_workspace:
           root: .
           paths:
-            - .circleci/ansible/
+            - .circleci/ansible
       - destroy-environment
 
   configure-infrastructure:
@@ -211,11 +211,12 @@ jobs:
           command: |
             # Your code here
             apk add --update ansible
+            pip install awscli
       - run:
           name: Configure server
           command: |
             # Your code here
-            ansible-playbook -i inventory.txt configure-server.yml
+            ansible-playbook -i ./inventory.txt ./configure-server.yml
       # Here's where you will add some code to rollback on failure
       - destroy-environment
 
