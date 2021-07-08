@@ -30,7 +30,7 @@ commands:
             #  Add revert code here. You can find this in the Getting Started section.
               exit 1
             fi
-            
+
 jobs:
   build-frontend:
     docker:
@@ -186,27 +186,38 @@ jobs:
       - persist_to_workspace:
           root: .
           paths:
-            - .circleci/ansible/inventory.txt
+            - .circleci/ansible/
       - destroy-environment
 
-#   configure-infrastructure:
-#     docker:
-#       # Docker image here that supports Ansible
-#     steps:
-#       # Checkout code from git
-#       # Add ssh keys with fingerprint
-#       # attach workspace
-#       - run:
-#           name: Install dependencies
-#           command: |
-#             # Your code here
-#             exit 1
-#       - run:
-#           name: Configure server
-#           command: |
-#             # Your code here
-#             exit 1
-#       # Here's where you will add some code to rollback on failure      
+  configure-infrastructure:
+    docker:
+      - image: python:3.7-alpine3.11
+    environment:
+      TYPEORM_CONNECTION: $TYPEORM_CONNECTION
+      TYPEORM_PORT: $TYPEORM_PORT
+      TYPEORM_HOST: $TYPEORM_HOST
+      TYPEORM_USERNAME: $TYPEORM_USERNAME
+      TYPEORM_PASSWORD: $TYPEORM_PASSWORD
+      TYPEORM_DATABASE: $TYPEORM_DATABASE
+      TYPEORM_ENTITIES: $TYPEORM_ENTITIES
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints: [9d:77:a5:ae:4c:ef:5c:fd:16:cf:e7:01:39:5e:ee:a1:00:d2:be:d3]
+      - attach_workspace:
+          at: .
+      - run:
+          name: Install dependencies
+          command: |
+            # Your code here
+            apk add --update ansible
+      - run:
+          name: Configure server
+          command: |
+            # Your code here
+            ansible-playbook -i inventory.txt configure-server.yml
+      # Here's where you will add some code to rollback on failure
+      - destroy-environment
 
 #   run-migrations:
 #     docker:
@@ -343,8 +354,8 @@ workflows:
           filters:
             branches:
               only: [test-feature-branch]
-      # - configure-infrastructure:
-      #     requires: [deploy-infrastructure]
+      - configure-infrastructure:
+          requires: [deploy-infrastructure]
       # - run-migrations:
       #     requires: [configure-infrastructure]
       # - deploy-frontend:
