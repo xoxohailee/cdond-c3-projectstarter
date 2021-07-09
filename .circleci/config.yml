@@ -19,16 +19,14 @@ commands:
     steps:
       - run:
           name: Revert migrations
-          # Add when this will run
           command: |
             # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
-            SUCCESS = 1
-            if(( $SUCCESS==1 )); 
+            SUCCESS=$(curl -H "token: migration-${CIRCLE_WORKFLOW_ID}" --request GET https://api.memstash.io/values/migration_result)
+            if(( ${SUCCESS}==1 )); 
             then
-            #  cd ~/project/backend
-            #  npm install
-            #  Add revert code here. You can find this in the Getting Started section.
-              exit 1
+              cd backend
+              npm install
+              npm run migrations:revert
             fi
 
 jobs:
@@ -199,6 +197,7 @@ jobs:
       TYPEORM_USERNAME: $TYPEORM_USERNAME
       TYPEORM_PASSWORD: $TYPEORM_PASSWORD
       TYPEORM_DATABASE: $TYPEORM_DATABASE
+      TYPEORM_MIGRATIONS: $TYPEORM_MIGRATIONS
       TYPEORM_ENTITIES: $TYPEORM_ENTITIES
     steps:
       - checkout
@@ -220,22 +219,40 @@ jobs:
       # Here's where you will add some code to rollback on failure
       - destroy-environment
 
-#   run-migrations:
-#     docker:
-#       # Docker image here that supports NodeJS
-#     steps:
-#       # Checkout code from git
-#       - run:
-#           name: Run migrations
-#           command: |
-#             # Your code here
-#             exit 1
-#       - run:
-#           name: Send migration results to memstash
-#           command: |
-#             # Your code here
-#             exit 1
-#      # Here's where you will add some code to rollback on failure      
+  run-migrations:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - run:
+          name: install awscli
+          command: |
+            sudo apt-get update
+            sudo apt-get -y install awscli
+      - run:
+          name: Run migrations
+          command: |
+            cd backend
+            echo ENVIROMENT=production > ".env"
+            echo TYPEORM_CONNECTION=$TYPEORM_CONNECTION >> ".env"
+            echo TYPEORM_MIGRATIONS_DIR=$TYPEORM_MIGRATIONS_DIR >> ".env"
+            echo TYPEORM_ENTITIES=$TYPEORM_ENTITIES >> ".env"
+            echo TYPEORM_MIGRATIONS=$TYPEORM_MIGRATIONS >> ".env"
+            echo TYPEORM_HOST=$TYPEORM_HOST >> ".env"
+            echo TYPEORM_PORT=$TYPEORM_PORT >> ".env"
+            echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> ".env"
+            echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> ".env"
+            echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> ".env"
+            npm i
+            npm run migrations >> result.txt
+            cat result.txt
+      - run:
+          name: Send migration results to memstash
+          command: |
+            RESULT=$(cat result.txt | grep -c "has been executed successfully")
+            echo ${RESULT}
+            curl -H "Content-Type: text/plain" -H "token: migration-${CIRCLE_WORKFLOW_ID}" --request PUT --data ${RESULT} https://api.memstash.io/values/migration_result
+      - revert-migrations    
 
 #   deploy-frontend:
 #     docker:
@@ -357,8 +374,8 @@ workflows:
               only: [test-feature-branch]
       - configure-infrastructure:
           requires: [deploy-infrastructure]
-      # - run-migrations:
-      #     requires: [configure-infrastructure]
+      - run-migrations:
+          requires: [configure-infrastructure]
       # - deploy-frontend:
       #     requires: [run-migrations]
       # - deploy-backend:
