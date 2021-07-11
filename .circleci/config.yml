@@ -20,6 +20,7 @@ commands:
           when: always
           command: |
             # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
+            SUCCESS=0
             SUCCESS=$(curl -H "token: migration-${CIRCLE_WORKFLOW_ID}" --request GET https://api.memstash.io/values/migration_result)
             echo ${SUCCESS}
             if(( ${SUCCESS}==1 )); 
@@ -230,6 +231,7 @@ jobs:
           command: |
             sudo apt-get update
             sudo apt-get -y install awscli
+      - revert-migrations
       - run:
           name: Run migrations
           command: |
@@ -250,13 +252,13 @@ jobs:
       - run:
           name: Send migration results to memstash
           command: |
-            # cd backend/
-            # cat result.txt
-            # grep -Fc "has been executed successfully" result.txt
-            # RESULT=$(grep -Fc "has been executed successfully" result.txt)
-            # echo "$RESULT"
+            cd backend/
+            cat result.txt
+            grep -Fc "has been executed successfully" result.txt
+            RESULT=$(grep -Fc "has been executed successfully" result.txt)
+            echo "RESULT : ${RESULT}"
             # echo "${RESULT}"
-            # curl -H "Content-Type: text/plain" -H "token: migration-${CIRCLE_WORKFLOW_ID}" --request PUT --data ${RESULT} https://api.memstash.io/values/migration_result
+            curl -H "Content-Type: text/plain" -H "token: migration-${CIRCLE_WORKFLOW_ID}" --request PUT --data ${RESULT} https://api.memstash.io/values/migration_result
       - revert-migrations
 
 #   deploy-frontend:
