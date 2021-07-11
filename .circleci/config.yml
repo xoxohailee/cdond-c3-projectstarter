@@ -207,7 +207,7 @@ jobs:
           at: .
       - run:
           name: Install dependencies
-          command: |ß
+          command: |
             # Your code heree
             apk add --update ansible
             pip install awscli
