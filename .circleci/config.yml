@@ -231,7 +231,6 @@ jobs:
           command: |
             sudo apt-get update
             sudo apt-get -y install awscli
-      - revert-migrations
       - run:
           name: Run migrations
           command: |
@@ -247,6 +246,7 @@ jobs:
             echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> ".env"
             echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> ".env"
             npm i
+            npm run migrations:revert
             npm run migrations >> result.txt
             cat result.txt
       - run:
