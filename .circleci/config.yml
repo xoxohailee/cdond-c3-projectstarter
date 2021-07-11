@@ -293,7 +293,10 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            yum -y install nodejs
+            yum install epel-release
+            yum install -y npm nodejs
+            node -v
+            npm -v
       - run:
           name: Get backend url
           command: |
