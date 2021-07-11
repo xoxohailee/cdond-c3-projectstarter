@@ -17,10 +17,10 @@ commands:
     steps:
       - run:
           name: Rollback Migration Result In Memstash.io
-            when: on_fail
-            command: |
-              FAIL_RESULT=0
-              curl -H "Content-Type: text/plain" -H "token: migration-${CIRCLE_WORKFLOW_ID}" --request PUT --data ${FAIL_RESULT} https://api.memstash.io/values/migration_result
+          when: on_fail
+          command: |
+            FAIL_RESULT=0
+            curl -H "Content-Type: text/plain" -H "token: migration-${CIRCLE_WORKFLOW_ID}" --request PUT --data ${FAIL_RESULT} https://api.memstash.io/values/migration_result
       - run:
           name: Revert migrations
           command: |
