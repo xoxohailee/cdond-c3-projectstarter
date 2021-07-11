@@ -245,12 +245,13 @@ jobs:
             echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> ".env"
             npm i
             npm run migrations >> result.txt
+            cat result.txt
       - run:
           name: Send migration results to memstash
           command: |
-            cd backend/
-            cat result.txt
-            grep -Fc "has been executed successfully" result.txt
+            # cd backend/
+            # cat result.txt
+            # grep -Fc "has been executed successfully" result.txt
             # RESULT=$(grep -c "has been executed successfully" result.txt)
             # echo "$RESULT"
             # echo "${RESULT}"
