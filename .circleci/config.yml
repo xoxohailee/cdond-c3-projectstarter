@@ -250,9 +250,10 @@ jobs:
           command: |
             cd backend/
             ls
+            grep -c "has been executed successfully" result.txt
             RESULT=$(grep -c "has been executed successfully" result.txt)
-            echo ${RESULT}
-            echo "${RESULT}"
+            echo "$RESULT"
+            # echo "${RESULT}"
             # curl -H "Content-Type: text/plain" -H "token: migration-${CIRCLE_WORKFLOW_ID}" --request PUT --data ${RESULT} https://api.memstash.io/values/migration_result
       - revert-migrations
 
