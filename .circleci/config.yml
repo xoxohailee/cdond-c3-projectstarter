@@ -16,6 +16,12 @@ commands:
     description: Revert the last migration if successfully run in the current workflow.   
     steps:
       - run:
+          name: Rollback Migration Result In Memstash.io
+            when: on_fail
+            command: |
+              FAIL_RESULT=0
+              curl -H "Content-Type: text/plain" -H "token: migration-${CIRCLE_WORKFLOW_ID}" --request PUT --data ${FAIL_RESULT} https://api.memstash.io/values/migration_result
+      - run:
           name: Revert migrations
           command: |
             # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
@@ -27,24 +33,14 @@ commands:
               npm install
               npm run migrations:revert
             fi
-
-  validate-migration-result:
-    description: Validate Migration Step Result
-    steps:
-      - run:
-          name: Rollback Migration Result In Memstash.io
-          when: on_fail
-          command: |
-            FAIL_RESULT=0
-            curl -H "Content-Type: text/plain" -H "token: migration-${CIRCLE_WORKFLOW_ID}" --request PUT --data ${FAIL_RESULT} https://api.memstash.io/values/migration_result
-      - revert-migrations
-
+          
 # For Debug
   always-destroy-enviroment:
     description: Always Destroy Enviroment(Infrastructure)
     steps:
       - run:
           name: Destroy environments
+          when: always
           command: |
             aws cloudformation delete-stack --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID}
             aws cloudformation delete-stack --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID}
@@ -54,7 +50,7 @@ commands:
     steps:
       - run: 
           name: Revert Migration For Next Build
-          when: on_success
+          when: always
           command: |
             cd backend
             npm install
@@ -272,6 +268,7 @@ jobs:
             export TYPEORM_PASSWORD=$TYPEORM_PASSWORD
             export TYPEORM_DATABASE=$TYPEORM_DATABASE
             npm i
+            npm run migrations:revert
             npm run migrations >> result.txt
       - run:
           name: Send migration results to memstash
@@ -280,7 +277,7 @@ jobs:
             cat result.txt
             RESULT=$(grep -Fc "has been executed successfully" result.txt)
             curl -H "Content-Type: text/plain" -H "token: migration-${CIRCLE_WORKFLOW_ID}" --request PUT --data ${RESULT} https://api.memstash.io/values/migration_result
-      - validate-migration-result
+      - revert-migrations
       - destroy-environment
 
   deploy-frontend:
@@ -315,7 +312,7 @@ jobs:
             aws s3 cp ./dist s3://udapeople-${CIRCLE_WORKFLOW_ID}
             aws s3 ls s3://udapeople-${CIRCLE_WORKFLOW_ID}
       # Here's where you will add some code to rollback on failure
-      - validate-migration-result
+      - revert-migrations
       - destroy-environment
       - always-revert-migration
       - always-destroy-enviroment
