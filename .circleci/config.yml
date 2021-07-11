@@ -252,7 +252,7 @@ jobs:
           name: Run migrations
           command: |
             cd backend/
-            export ENVIROMENT=production
+            export ENVIRONMENT="production"
             export TYPEORM_CONNECTION=$TYPEORM_CONNECTION
             export TYPEORM_MIGRATIONS_DIR=$TYPEORM_MIGRATIONS_DIR
             export TYPEORM_ENTITIES=$TYPEORM_ENTITIES
@@ -263,7 +263,6 @@ jobs:
             export TYPEORM_PASSWORD=$TYPEORM_PASSWORD
             export TYPEORM_DATABASE=$TYPEORM_DATABASE
             npm i
-            npm run migrations:revert
             npm run migrations >> result.txt
       - run:
           name: Send migration results to memstash
