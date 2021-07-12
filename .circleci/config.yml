@@ -290,10 +290,9 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            yum clean all
-            yum clean metadata
-            yum install epel-release
-            yum install -y npm nodejs
+            sudo yum install -y gcc-c++ make 
+            curl -fsSL https://rpm.nodesource.com/setup_lts.x | sudo bash -
+            sudo yum install -y nodejs
             node -v
             npm -v
       - run:
