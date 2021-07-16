@@ -303,8 +303,7 @@ jobs:
             # your code here
             BACKENDIP=$(curl -H "token: ${CIRCLE_WORKFLOW_ID}" --request GET https://api.memstash.io/values/public_dns)
             echo "${BACKENDIP}"
-            API_URL="http://${BACKENDIP}:3030" >> .env
-            echo .env
+            API_URL="http://${BACKENDIP}:3030" >> "frontend/.env"
       - run:
           name: Deploy frontend objects
           command: |
@@ -312,7 +311,7 @@ jobs:
             cd frontend
             npm i
             npm run build
-            aws s3 cp ./dist s3://udapeople-29dmy40zq1ƒ/ --recursive
+            aws s3 cp ./dist/* s3://udapeople-29dmy40zq1ƒ/
             aws s3 ls s3://udapeople-29dmy40zq1/
       # Here's where you will add some code to rollback on failure
       - revert-migrations
