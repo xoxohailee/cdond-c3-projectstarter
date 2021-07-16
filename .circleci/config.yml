@@ -311,7 +311,7 @@ jobs:
             cd frontend
             npm i
             npm run build
-            aws s3 cp ./dist/* s3://udapeople-29dmy40zq1ƒ/
+            aws s3 cp ./dist/* s3://udapeople-29dmy40zq1ƒ/dist/* --recursive
             aws s3 ls s3://udapeople-29dmy40zq1/
       # Here's where you will add some code to rollback on failure
       - revert-migrations
