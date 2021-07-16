@@ -306,7 +306,7 @@ jobs:
             cd frontend/
             pwd
             ls
-            echo ".env"
+            cat .env
       - run:
           name: Deploy frontend objects
           command: |
