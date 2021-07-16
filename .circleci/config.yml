@@ -304,7 +304,7 @@ jobs:
             BACKENDIP=$(curl -H "token: ${CIRCLE_WORKFLOW_ID}" --request GET https://api.memstash.io/values/public_dns)
             echo "${BACKENDIP}"
             API_URL="http://${BACKENDIP}:3030" >> .env
-            echo "${API_URL}"
+            echo .env
       - run:
           name: Deploy frontend objects
           command: |
