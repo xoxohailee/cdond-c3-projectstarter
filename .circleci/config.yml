@@ -89,7 +89,7 @@ jobs:
       - run:
           name: Back-end build
           command: |
-             # Your code here
+             # Your code here 
              cd backend
              npm i
              npm run build
@@ -258,7 +258,7 @@ jobs:
           name: Run migrations
           command: |
             cd backend/
-            cat .env
+            echo > .env
             echo ENVIRONMENT="production" >> .env
             echo TYPEORM_CONNECTION=$TYPEORM_CONNECTION >> .env
             echo TYPEORM_MIGRATIONS_DIR=$TYPEORM_MIGRATIONS_DIR >> .env
