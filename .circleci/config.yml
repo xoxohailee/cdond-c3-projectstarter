@@ -258,17 +258,17 @@ jobs:
           name: Run migrations
           command: |
             cd backend/
-            echo > .env
-            echo ENVIRONMENT="production" >> .env
-            echo TYPEORM_CONNECTION=$TYPEORM_CONNECTION >> .env
-            echo TYPEORM_MIGRATIONS_DIR=$TYPEORM_MIGRATIONS_DIR >> .env
-            echo TYPEORM_ENTITIES=$TYPEORM_ENTITIES >> .env
-            echo TYPEORM_MIGRATIONS=$TYPEORM_MIGRATIONS >> .env
-            echo TYPEORM_HOST=$TYPEORM_HOST >> .env
-            echo TYPEORM_PORT=$TYPEORM_PORT >> .env
-            echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> .env
-            echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> .env
-            echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> .env
+            echo > ".env"
+            echo ENVIRONMENT="production" >> ".env"
+            echo TYPEORM_CONNECTION=$TYPEORM_CONNECTION >> ".env"
+            echo TYPEORM_MIGRATIONS_DIR=$TYPEORM_MIGRATIONS_DIR >> ".env"
+            echo TYPEORM_ENTITIES=$TYPEORM_ENTITIES >> ".env"
+            echo TYPEORM_MIGRATIONS=$TYPEORM_MIGRATIONS >> ".env"
+            echo TYPEORM_HOST=$TYPEORM_HOST >> ".env"
+            echo TYPEORM_PORT=$TYPEORM_PORT >> ".env"
+            echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> ".env"
+            echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> ".env"
+            echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> ".env"
             npm i
             npm run migrations:revert
             npm run migrations >> result.txt
@@ -302,9 +302,8 @@ jobs:
           command: |
             # your code here
             BACKENDIP=$(curl -H "token: ${CIRCLE_WORKFLOW_ID}" --request GET https://api.memstash.io/values/public_dns)
-            echo "${BACKENDIP}"
             API_URL="http://${BACKENDIP}:3030" >> "frontend/.env"
-            echo frontend/.env
+            echo "frontend/.env"
       - run:
           name: Deploy frontend objects
           command: |
