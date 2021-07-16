@@ -11,7 +11,7 @@ commands:
           command: |
             aws cloudformation delete-stack --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID}
             aws cloudformation delete-stack --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID}
-            # aws s3 rm s3://udapeople-29dmy40zq1 --recursive
+            aws s3 rm s3://udapeople-29dmy40zq1 --recursive
 
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.   
@@ -303,7 +303,9 @@ jobs:
             # your code here
             BACKENDIP=$(curl -H "token: ${CIRCLE_WORKFLOW_ID}" --request GET https://api.memstash.io/values/public_dns)
             API_URL="http://${BACKENDIP}:3030" >> "frontend/.env"
-            echo "frontend/.env"
+            pwd
+            cd frontend/
+            echo ".env"
       - run:
           name: Deploy frontend objects
           command: |
@@ -398,19 +400,19 @@ workflows:
   default:
     jobs:
       # - build-frontend:
-      #     context:
-      #       - SlackNotiContext
+          # context:
+            # - SlackNotiContext
       # - build-backend:
-      #     context:
-      #       - SlackNotiContext
+          # context:
+            # - SlackNotiContext
       # - test-frontend:
-      #     requires: [build-frontend]
+          # requires: [build-frontend]
       # - test-backend:
-      #     requires: [build-backend]
+          # requires: [build-backend]
       # - scan-backend:
-      #     requires: [build-backend]
+          # requires: [build-backend]
       # - scan-frontend:
-      #     requires: [build-frontend]
+          # requires: [build-frontend]
       - deploy-infrastructure:
           # requires: [test-frontend, test-backend, scan-frontend, scan-backend]
           filters:
