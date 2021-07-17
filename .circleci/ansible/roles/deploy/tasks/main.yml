@@ -2,7 +2,7 @@
   become: true
   copy:
     src: /root/project/backend/dist/
-    dest: /home/ubuntu/backend
+    dest: /home/ubuntu/backend/
 
 - name: "Install node dependencies"
   become: true
