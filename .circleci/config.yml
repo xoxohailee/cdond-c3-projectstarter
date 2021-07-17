@@ -11,7 +11,7 @@ commands:
           command: |
             aws cloudformation delete-stack --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID}
             aws cloudformation delete-stack --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID}
-            aws s3 rm s3://udapeople-29dmy40zq1 --recursive
+            aws s3 rm s3://udapeople-${CIRCLE_WORKFLOW_ID} --recursive
 
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.   
@@ -209,6 +209,7 @@ jobs:
               --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID}" \
               --output text >> .circleci/ansible/inventory.txt
               yum -y install tar gzip jq npm
+              cat ".circleci/ansible/inventory.txt"
       - persist_to_workspace:
           root: .
           paths:
@@ -241,8 +242,10 @@ jobs:
       - run:
           name: Configure server
           command: |
+            cat ".circleci/ansible/inventory.txt"
             ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml
       - destroy-environment
+      - always-destroy-enviroment
 
   run-migrations:
     docker:
@@ -311,31 +314,37 @@ jobs:
             cd frontend
             npm i
             npm run build
-            aws s3 sync ./dist s3://"udapeople-29dmy40zq1" --debug
-            aws s3 ls s3://"udapeople-29dmy40zq1"
+            aws s3 sync ./dist s3://"udapeople-${CIRCLE_WORKFLOW_ID}"
       # Here's where you will add some code to rollback on failure
       - revert-migrations
       - destroy-environment
-      - always-revert-migration
-      - always-destroy-enviroment
+      
                     
-#   deploy-backend:
-#     docker:
-#       # Docker image here that supports Ansible
-#     steps:
-#       # Checkout code from git
-#       # Add ssh keys with fingerprint
-#       # attach workspace
-#       - run:
-#           name: Install dependencies
-#           command: |
-#             # your code here
-#       - run:
-#           name: Deploy backend
-#           command: |
-#             # your code here
-#       # Here's where you will add some code to rollback on failure  
-
+  deploy-backend:
+    docker:
+      # Docker image here that supports Ansible
+      - image: python:3.7-alpine3.11      
+    steps:
+      # Checkout code from git
+      - checkout
+      # Add ssh keys with fingerprint
+      - add_ssh_keys:
+          fingerprints: [9d:77:a5:ae:4c:ef:5c:fd:16:cf:e7:01:39:5e:ee:a1:00:d2:be:d3]
+      # attach workspace
+      - attach_workspace:
+          at: .
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --update ansible
+            pip install awscli
+      - run:
+          name: Deploy backend
+          command: |
+            ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/deploy-backend.yml
+      # Here's where you will add some code to rollback on failure  
+      - revert-migrations
+      - destroy-environment
 #   smoke-test:
 #     docker:
 #       # Lightweight Docker image 
@@ -418,10 +427,10 @@ workflows:
               only: [test-feature-branch]
       - configure-infrastructure:
           requires: [deploy-infrastructure]
-      - run-migrations:
-          requires: [configure-infrastructure]
-      - deploy-frontend:
-          requires: [run-migrations]
+      # - run-migrations:
+      #     requires: [configure-infrastructure]
+      # - deploy-frontend:
+      #     requires: [run-migrations]
       # - deploy-backend:
       #     requires: [run-migrations]
       # - smoke-test:
