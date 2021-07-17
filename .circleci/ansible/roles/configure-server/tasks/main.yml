@@ -2,7 +2,7 @@
   become: true
   copy:
     src: /root/project/backend/.env
-    dest: /home/ubuntu/backend/.env
+    dest: /home/ubuntu/backend/
 
 - name: "Update/upgrade packages."
   become: true
