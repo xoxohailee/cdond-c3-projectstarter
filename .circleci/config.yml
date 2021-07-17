@@ -339,7 +339,7 @@ jobs:
           name: Install dependencies
           command: |
             apk add --update ansible
-            pip install awscli
+            apk add --update npm
       - run:
           name: Build Backend
           command: |
