@@ -247,6 +247,7 @@ jobs:
             echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> ".env"
       - run:
           name: Configure server
+          command: |
             cat ".circleci/ansible/inventory.txt"
             ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml
       - destroy-environment
