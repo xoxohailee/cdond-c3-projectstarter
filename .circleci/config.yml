@@ -231,7 +231,7 @@ jobs:
             apk add --update ansible
             pip install awscli
       - run:
-          name: Configure server
+          name: Create dotenv file
           command: |
             cd backend/
             echo > ".env"
@@ -245,9 +245,10 @@ jobs:
             echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> ".env"
             echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> ".env"
             echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> ".env"
-            ls
-            cat "../.circleci/ansible/inventory.txt"
-            ansible-playbook -i ../.circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml
+      - run:
+          name: Configure server
+            cat ".circleci/ansible/inventory.txt"
+            ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml
       - destroy-environment
 
   run-migrations:
