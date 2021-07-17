@@ -340,8 +340,8 @@ jobs:
           command: |
             apk add --update ansible
             apk add --update npm
-            apk add --update aws-cli
             apk add --update curl
+            pip3 --no-cache-dir install awscli
       - run:
           name: Build Backend
           command: |
