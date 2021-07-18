@@ -353,7 +353,7 @@ jobs:
           command: |
             pwd
             ls
-            tar -cvf backend.tar ./dist
+            tar -cvf backend.tar ./backend/dist
       - run:
           name: Deploy backend
           command: |
@@ -450,7 +450,7 @@ workflows:
       - deploy-frontend:
           requires: [run-migrations]
       - deploy-backend:
-          requires: [run-migrations]
+          requires: [run-migrations, deploy-frontend]
       # - smoke-test:
       #     requires: [deploy-backend, deploy-frontend]
       # - cloudfront-update:
