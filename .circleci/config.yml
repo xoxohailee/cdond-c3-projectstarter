@@ -378,7 +378,7 @@ jobs:
           name: Backend smoke test.
           command: |
             # your code here
-            RESPONSE=$(curl -H "Content-Type: application/json" -o --request GET ${STATUS_API})
+            RESPONSE=$(curl ${STATUS_API} -H "Accept: application/json")
             STATUS=$(echo ${RESPONSE} | python -c "import sys, json; print json.load(sys.stdin)[0]['status']")
             echo ${STATUS}
             if["${STATUS} -eq "ok"];then
