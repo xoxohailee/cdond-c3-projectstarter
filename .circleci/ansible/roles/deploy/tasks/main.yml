@@ -1,7 +1,7 @@
 - name: "Copy Compiled Back-End Files to EC2"
   become: true
   copy:
-    src: /root/project/backend/backend.tar
+    src: /root/project/backend.tar
     dest: /home/ubuntu/backend/
 
 - name: "un tar"
