@@ -349,6 +349,12 @@ jobs:
             npm i
             npm run build
       - run:
+          name: "tar archiv"
+          command: |
+            pwd
+            ls
+            tar -cvf backend.tar ./dist
+      - run:
           name: Deploy backend
           command: |
             ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/deploy-backend.yml

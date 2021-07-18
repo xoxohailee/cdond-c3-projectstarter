@@ -1,14 +1,20 @@
 - name: "Copy Compiled Back-End Files to EC2"
   become: true
   copy:
-    src: /root/project/backend/dist/
+    src: /root/project/backend/backend.tar
     dest: /home/ubuntu/backend/
 
-- name: "Install node dependencies"
+- name: "un tar"
   become: true
   shell: |
     cd backend/
-    npm i 
+    tar -xvf backend.tar
+
+# - name: "Install node dependencies"
+#   become: true
+#   shell: |
+#     cd backend/
+#     npm i 
 
 - name: "PM2 Start"
   become: true
