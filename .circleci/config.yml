@@ -375,14 +375,17 @@ jobs:
             # your code here
             BACKENDIP=$(curl -H "token: ${CIRCLE_WORKFLOW_ID}" --request GET https://api.memstash.io/values/public_dns)
             export STATUS_API="http://${BACKENDIP}:3030/api/status"
+            echo "${STATUS_API}"
       - run:
           name: Backend smoke test.
           command: |
             # your code here
-            echo $STATUS_API
+            echo "$STATUS_API"
             echo ${STATUS_API}
             echo "${STATUS_API}"
+            RESPONSE=$(curl -H "Accept: application/json" $STATUS_API)
             RESPONSE=$(curl -H "Accept: application/json" ${STATUS_API})
+            RESPONSE=$(curl -H "Accept: application/json" "${STATUS_API}")
             STATUS=$(echo ${RESPONSE} | python -c "import sys, json; print json.load(sys.stdin)[0]['status']")
             echo ${STATUS}
             if["${STATUS} -eq "ok"];then
