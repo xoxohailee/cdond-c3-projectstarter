@@ -383,9 +383,9 @@ jobs:
             echo "$STATUS_API"
             echo ${STATUS_API}
             echo "${STATUS_API}"
-            RESPONSE=$(curl -H "Accept: application/json" $STATUS_API)
-            RESPONSE=$(curl -H "Accept: application/json" ${STATUS_API})
-            RESPONSE=$(curl -H "Accept: application/json" "${STATUS_API}")
+            RESPONSE=$(curl -H "Accept: application/json" -XGET $STATUS_API)
+            RESPONSE=$(curl -H "Accept: application/json" -XGET ${STATUS_API})
+            RESPONSE=$(curl -H "Accept: application/json" -XGET "${STATUS_API}")
             STATUS=$(echo ${RESPONSE} | python -c "import sys, json; print json.load(sys.stdin)[0]['status']")
             echo ${STATUS}
             if["${STATUS} -eq "ok"];then
