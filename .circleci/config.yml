@@ -20,8 +20,8 @@ commands:
           name: Rollback Migration Result In Memstash.io
           when: on_fail
           command: |
-            FAIL_RESULT=0
-            curl -H "Content-Type: text/plain" -H "token: migration-${CIRCLE_WORKFLOW_ID}" --request PUT --data ${FAIL_RESULT} https://api.memstash.io/values/migration_result
+            FAILRESULT=0
+            curl -H "Content-Type: text/plain" -H "token: migration-${CIRCLE_WORKFLOW_ID}" --request PUT --data ${FAILRESULT} https://api.memstash.io/values/migration_result
       - run:
           name: Revert migrations
           command: |
@@ -188,9 +188,9 @@ jobs:
               --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID}" \
               --tags project=udapeople \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID}"
-            PUBLIC_DNS=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicDnsName' --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID}" --output text)
-            echo ${PUBLIC_DNS}
-            curl -H "Content-Type: text/plain" -H "token: ${CIRCLE_WORKFLOW_ID}" --request PUT --data ${PUBLIC_DNS} https://api.memstash.io/values/public_dns
+            PUBLICDNS=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicDnsName' --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID}" --output text)
+            echo ${PUBLICDNS}
+            curl -H "Content-Type: text/plain" -H "token: ${CIRCLE_WORKFLOW_ID}" --request PUT --data ${PUBLICDNS} https://api.memstash.io/values/public_dns
       - run:
           name: Ensure front-end infrastructure exist
           command: |
@@ -312,6 +312,7 @@ jobs:
             cd frontend/
             BACKENDIP=$(curl -H "token: ${CIRCLE_WORKFLOW_ID}" --request GET https://api.memstash.io/values/public_dns)
             echo API_URL="http://${BACKENDIP}:3030" > ".env"
+            echo ${API_URL}
       - run:
           name: Deploy frontend objects
           command: |
