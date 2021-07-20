@@ -377,9 +377,7 @@ jobs:
             # your code here
             echo ${CIRCLE_WORKFLOW_ID}
             BACKENDIP=$(curl -H "token: ${CIRCLE_WORKFLOW_ID}" --request GET https://api.memstash.io/values/public_dns)
-            STATUSAPI="http://${BACKENDIP}:3030/api/status"
-            echo $STATUSAPI
-            echo ${STATUSAPI}
+            STATUSAPI="https://${BACKENDIP}:3030/api/status"
             if curl -s --head ${STATUSAPI}
             then
               echo "OK"
