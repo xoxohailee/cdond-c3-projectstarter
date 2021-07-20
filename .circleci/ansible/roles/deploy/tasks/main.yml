@@ -10,12 +10,6 @@
     cd backend/
     tar -xvf backend.tar
 
-# - name: "Install node dependencies"
-#   become: true
-#   shell: |
-#     cd backend/
-#     npm i 
-
 - name: "PM2 Start"
   become: true
   shell: |
