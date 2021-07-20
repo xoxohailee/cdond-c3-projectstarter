@@ -190,6 +190,7 @@ jobs:
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID}"
             PUBLICDNS=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID}" --output text)
             echo ${PUBLICDNS}
+            echo ${CIRCLE_WORKFLOW_ID}
             curl -H "Content-Type: text/plain" -H "token: ${CIRCLE_WORKFLOW_ID}" --request PUT --data ${PUBLICDNS} https://api.memstash.io/values/public_dns
       - run:
           name: Ensure front-end infrastructure exist
@@ -374,6 +375,7 @@ jobs:
           name: Backend Smoke Test.
           command: |
             # your code here
+            echo ${CIRCLE_WORKFLOW_ID}
             BACKENDIP=$(curl -H "token: ${CIRCLE_WORKFLOW_ID}" --request GET https://api.memstash.io/values/public_dns)
             STATUSAPI="http://${BACKENDIP}:3030/api/status"
             echo $STATUSAPI
