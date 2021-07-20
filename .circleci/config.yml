@@ -188,7 +188,7 @@ jobs:
               --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID}" \
               --tags project=udapeople \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID}"
-            PUBLICDNS=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicDnsName' --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID}" --output text)
+            PUBLICDNS=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID}" --output text)
             echo ${PUBLICDNS}
             curl -H "Content-Type: text/plain" -H "token: ${CIRCLE_WORKFLOW_ID}" --request PUT --data ${PUBLICDNS} https://api.memstash.io/values/public_dns
       - run:
