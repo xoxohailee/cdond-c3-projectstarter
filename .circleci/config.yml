@@ -28,7 +28,7 @@ commands:
             # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
             SUCCESS=$(curl -H "token: migration-${CIRCLE_WORKFLOW_ID}" --request GET https://api.memstash.io/values/migration_result)
             echo "${SUCCESS}"
-            if ["${SUCCESS}" -ne 1]
+            if [ "${SUCCESS}" -ne 1 ]
             then
               cd backend
               npm install
@@ -375,9 +375,9 @@ jobs:
           command: |
             # your code here
             BACKENDIP=$(curl -H "token: ${CIRCLE_WORKFLOW_ID}" --request GET https://api.memstash.io/values/public_dns)
-            STATUS_API="http://${BACKENDIP}:3030/api/status"
-            $STATUS_API
-            if curl -s --head ${STATUS_API}
+            STATUSAPI="http://${BACKENDIP}:3030/api/status"
+            STATUSAPI
+            if curl -s --head ${STATUSAPI}
             then
               echo "OK"
             else
