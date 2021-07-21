@@ -5,6 +5,9 @@ commands:
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
     steps:
+      # - run:
+      #     name: Delete files uploaded to S3.
+      #     when: on_fail
       - run:
           name: Destroy environments
           when: on_fail
@@ -24,6 +27,7 @@ commands:
             curl -H "Content-Type: text/plain" -H "token: migration-${CIRCLE_WORKFLOW_ID}" --request PUT --data ${FAILRESULT} https://api.memstash.io/values/migration_result
       - run:
           name: Revert migrations
+          when: always
           command: |
             # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
             SUCCESS=$(curl -H "token: migration-${CIRCLE_WORKFLOW_ID}" --request GET https://api.memstash.io/values/migration_result)
