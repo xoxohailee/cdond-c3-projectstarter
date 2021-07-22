@@ -394,12 +394,11 @@ jobs:
           command: |
             # your code here
             URL="http://udapeople-${CIRCLE_WORKFLOW_ID}.s3-website-us-west-2.amazonaws.com"
-            curl -s ${URL}
             if ( curl -s ${URL} | grep "Welcome" )
             then
-              return 1
-            else
               return 0
+            else
+              return 1
             fi
       - destroy-environment
       - revert-migrations
