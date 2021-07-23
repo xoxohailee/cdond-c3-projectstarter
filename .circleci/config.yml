@@ -419,23 +419,24 @@ jobs:
             node -v
             npm -v
       - run:
-          name: Get old stack workflow id
+          name: Retrieve old stack workflow ID
           command: |
             echo > lastFlow.txt
-            aws cloudformation list-exports --query "Exports[?Name==\`WorkflowID\`].Value" --no-paginate --output text >> lastFlow.txt
-            cat lastFlow.txt
+            aws cloudformation list-exports \
+              --query "Exports[?Name==\`WorkflowID\`].Value" \
+              --no-paginate \
+              --output text >> ./.circleci/lastFlow.txt
       - run:
           name: Update cloudfront distribution
           command: |
-            aws cloudformation deploy \
-              --template-file .circleci/files/cloudfront.yml \
-              --stack-name ${CIRCLE_WORKFLOW_ID} \
-              --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID}"
-              --tags project=udapeople
+            aws cloudformation update-stack \
+              --use-previous-template \
+              --stack-name udapeople-cloudfront \
+              --parameters ParameterKey=WorkflowID,ParameterValue=${CIRCLE_WORKFLOW_ID},UsePreviousValue=false
       - persist_to_workspace:
           root: .
           paths:
-            - ./lastFlow.txt
+            - project/.circleci/lastFlow.txt
       - destroy-environment
       - revert-migrations
 
