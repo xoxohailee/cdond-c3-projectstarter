@@ -423,6 +423,7 @@ jobs:
           command: |
             echo > lastFlow.txt
             aws cloudformation list-exports --query "Exports[?Name==\`WorkflowID\`].Value" --no-paginate --output text >> lastFlow.txt
+            cat lastFlow.txt
       - run:
           name: Update cloudfront distribution
           command: |
@@ -430,6 +431,8 @@ jobs:
               --template-file .circleci/files/cloudfront.yml \
               --stack-name ${CIRCLE_WORKFLOW_ID} \
               --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID}"
+              
+            aws cloudformation describe-stack-events --stack-name cd257fad-680b-458d-84df-98954af724a0
       - persist_to_workspace:
           root: .
           paths:
