@@ -413,12 +413,12 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            # yum install -y gcc-c++ make 
-            # curl -fsSL https://rpm.nodesource.com/setup_lts.x | bash -
-            # yum install -y nodejs
-            # node -v
-            # npm -v
-            yum -y install tar gzip jq npm
+            yum install -y gcc-c++ make 
+            curl -fsSL https://rpm.nodesource.com/setup_lts.x | bash -
+            yum install -y nodejs
+            node -v
+            npm -v
+            yum -y install tar gzip jq
       - run:
           name: Retrieve old stack workflow ID
           command: |
@@ -426,7 +426,7 @@ jobs:
             aws cloudformation list-exports \
               --query "Exports[?Name==\`WorkflowID\`].Value" \
               --no-paginate \
-              --output text >> ./.circleci/lastFlow.txt
+              --output text >> lastFlow.txt
       - run:
           name: Update cloudfront distribution
           command: |
@@ -437,7 +437,7 @@ jobs:
       - persist_to_workspace:
           root: .
           paths:
-            - project/.circleci/lastFlow.txt
+            - /lastFlow.txt
       - destroy-environment
       - revert-migrations
 
