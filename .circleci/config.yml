@@ -437,7 +437,7 @@ jobs:
       - persist_to_workspace:
           root: .
           paths:
-            - /lastFlow.txt
+            - ./lastFlow.txt
       - destroy-environment
       - revert-migrations
 
