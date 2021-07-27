@@ -5,14 +5,11 @@ commands:
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
     steps:
-      # - run:
-      #     name: Delete files uploaded to S3.
-      #     when: on_fail
       - run:
           name: Destroy environments
           when: on_fail
           command: |
-            aws s3 rm "s3://udapeople-${CIRCLE_WORKFLOW_ID}" --recursive
+            aws s3 rm "s3://udapeople-${CIRCLE_WORKFLOW_ID}/" --recursive
             aws cloudformation delete-stack --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID}
             aws cloudformation delete-stack --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID}
 
@@ -472,22 +469,22 @@ jobs:
 workflows:
   default:
     jobs:
-      # - build-frontend:
-      #     context:
-      #       - SlackNotiContext
-      # - build-backend:
-      #     context:
-      #       - SlackNotiContext
-      # - test-frontend:
-      #     requires: [build-frontend]
-      # - test-backend:
-      #     requires: [build-backend]
-      # - scan-backend:
-      #     requires: [build-backend]
-      # - scan-frontend:
-      #     requires: [build-frontend]
+      - build-frontend:
+          context:
+            - SlackNotiContext
+      - build-backend:
+          context:
+            - SlackNotiContext
+      - test-frontend:
+          requires: [build-frontend]
+      - test-backend:
+          requires: [build-backend]
+      - scan-backend:
+          requires: [build-backend]
+      - scan-frontend:
+          requires: [build-frontend]
       - deploy-infrastructure:
-          # requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
           filters:
             branches:
               only: [test-feature-branch]
