@@ -447,9 +447,10 @@ jobs:
       steps:
         - checkout
         - run:
-          name: Install dependencies
-          command: |
-            yum -y install tar gzip jq
+            name: Install dependencies
+            command: |
+              yum install -y gcc-c++ make 
+              yum -y install tar gzip jq
         - attach_workspace:
             at: .
         - run:
