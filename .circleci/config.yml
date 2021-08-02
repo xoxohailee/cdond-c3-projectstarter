@@ -42,18 +42,15 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - checkout
-      - restore_cache:
-          keys: [frontend-dependencies]
       - run:
           name: Build front-end
           command: |
-            # Your code here
             cd frontend
             npm i
             npm run build
-      - save_cache:
+       - save_cache:
           paths: [frontend/node_modules]
-          key: frontend-dependencies
+          key: frontend-build
       - slack/notify:
           event: fail
           template: basic_fail_1
@@ -63,18 +60,15 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - checkout
-      - restore_cache:
-          keys: [backend-dependencies]
       - run:
           name: Back-end build
           command: |
-             # Your code here 
              cd backend
              npm i
              npm run build
-      - save_cache:
+       - save_cache:
           paths: [backend/node_modules]
-          key: backend-dependencies
+          key: backend-build
       - slack/notify:
           event: fail
           template: basic_fail_1
@@ -88,7 +82,7 @@ jobs:
       - checkout
       # Restore from cache
       - restore_cache:
-          keys: [frontend-dependencies]
+          keys: [frontend-build]
       # Your job code here
       - run:
           name: Run front-end test
@@ -106,7 +100,7 @@ jobs:
       - checkout
       # Restore from cache
       - restore_cache:
-          keys: [backend-dependencies]
+          keys: [backend-build]
       # Your job code here
       - run:
           name: Run back-end test
@@ -125,7 +119,7 @@ jobs:
       - checkout
       # Restore from cache
       - restore_cache:
-          keys: [frontend-dependencies]
+          keys: [frontend-build]
       # Your job code here
       - run:
           name: Scan frontend dependencies
@@ -143,7 +137,7 @@ jobs:
       - checkout
       # Restore from cache
       - restore_cache:
-          keys: [backend-dependencies]
+          keys: [backend-build]
       # Your job code here
       - run:
           name: Scan backend dependencies
