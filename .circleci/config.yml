@@ -326,7 +326,7 @@ jobs:
       - run:
           name: "tar archiv"
           command: |
-            tar -cf backend.tar ./backend/dist
+            tar -cf backend.tar ./backend
       - run:
           name: Deploy backend
           command: |
