@@ -13,5 +13,5 @@
 - name: "PM2 Start"
   become: true
   shell: |
-    cd backend/
+    cd backend/backend/dist
     pm2 start npm --name backend -- start
