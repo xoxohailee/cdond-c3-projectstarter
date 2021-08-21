@@ -22,19 +22,6 @@ commands:
           command: |
             FAILRESULT=0
             curl -H "Content-Type: text/plain" -H "token: migration-${CIRCLE_WORKFLOW_ID}" --request PUT --data ${FAILRESULT} https://api.memstash.io/values/migration_result
-      - run:
-          name: Revert migrations
-          when: always
-          command: |
-            # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
-            SUCCESS=$(curl -H "token: migration-${CIRCLE_WORKFLOW_ID}" --request GET https://api.memstash.io/values/migration_result)
-            echo "${SUCCESS}"
-            if [ "${SUCCESS}" -ne 1 ]
-            then
-              cd backend
-              npm install
-              npm run migrations:revert
-            fi
           
 jobs:
   build-frontend:
@@ -252,7 +239,6 @@ jobs:
             echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> ".env"
             echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> ".env"
             npm i
-            # npm run migrations:revert
             npm run migrations >> result.txt
       - run:
           name: Send migration results to memstash
